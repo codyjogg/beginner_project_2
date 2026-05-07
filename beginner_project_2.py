@@ -1,47 +1,84 @@
-# incident report 
+import streamlit as st
 
-client_name = input("Please type the name of the client" )
-age = int(input("What is the client's age?" ))
-incident_type = input("Please describe the incident that took place" )
-severity_level = int(input("Please rate the severity from 0 - 10" ))
+st.title("Incident Report System")
 
-# Veriables above will be what ask for the users input. btw codyjogg created this :)
+# =======================
+# INPUT FORM
+# =======================
+with st.form("incident_form"):
 
-if age >= 18:
-    age_group = "adult"
-elif age >= 13:
-    age_group = "teen"
-else:
-    age_group = "child"
+    client_name = st.text_input("Client Name")
 
+    age = st.number_input(
+        "Client Age",
+        min_value=0,
+        max_value=120,
+        step=1
+    )
 
-#new variable for severity_level
+    incident_type = st.selectbox(
+        "Incident Type",
+        [
+            "Medical Emergency",
+            "Injury",
+            "Behavioral Incident",
+            "Property Damage",
+            "Other"
+        ]
+    )
 
-if severity_level >= 8:
-    risk_level = "high risk"
-elif severity_level >= 4:
-    risk_level = "medium risk"
-else: 
-    risk_level = "low risk"
+    other_incident = ""
 
+    if incident_type == "Other":
+        other_incident = st.text_input("Please describe the 'Other' incident")
 
-print("\n==============================")
-print("        INCIDENT REPORT        ")
-print("==============================\n")
+    severity_level = st.slider("Severity Level (0 - 10)", 0, 10, 0)
 
-print(f"Client Name: {client_name}")
-print(f"Age: {age}")
-print(f"Age Group: {age_group}")
+    submitted = st.form_submit_button("Submit Report")
 
-print("------------------------------")
+# =======================
+# PROCESS + OUTPUT
+# =======================
+if submitted:
 
-print(f"Incident Type: {incident_type}")
+    # Age group logic
+    if age >= 18:
+        age_group = "Adult"
+    elif age >= 13:
+        age_group = "Teen"
+    else:
+        age_group = "Child"
 
-print("------------------------------")
+    # Risk level logic
+    if severity_level >= 8:
+        risk_level = "High Risk"
+    elif severity_level >= 4:
+        risk_level = "Medium Risk"
+    else:
+        risk_level = "Low Risk"
 
-print(f"Severity Level (Raw): {severity_level}")
-print(f"Risk Level: {risk_level}")
+    # Final incident type handling
+    if incident_type == "Other":
+        final_incident_type = other_incident
+    else:
+        final_incident_type = incident_type
 
-print("\n==============================")
-print("        END OF REPORT         ")
-print("==============================")
+    # =======================
+    # REPORT OUTPUT
+    # =======================
+    st.markdown("## Incident Report")
+
+    st.write(f"**Client Name:** {client_name}")
+    st.write(f"**Age:** {age}")
+    st.write(f"**Age Group:** {age_group}")
+
+    st.write("---")
+
+    st.write(f"**Incident Type:** {final_incident_type}")
+
+    st.write("---")
+
+    st.write(f"**Severity Level:** {severity_level}")
+    st.write(f"**Risk Level:** {risk_level}")
+
+    st.success("Report submitted successfully!")
